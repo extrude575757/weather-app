@@ -8,14 +8,14 @@ const SearchByCity = (props) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // FIND DIFFERENT API WITH ONLY DAILY TEMPS, NOT HOURLY INCREMENTS, TRY https://openweathermap.org/forecast16#16days
-  // FIGURE OUT HOW DISPLAY DATES
+  // TRANSLATE UTC TIME TO TIMEZONE TIME
+  // MAKE MAP FOR DAILY MIN MAX AND DAY TEMP
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const weatherData = await axios(
-          "https://api.openweathermap.org/data/2.5/forecast?q=Brentwood,us&units=imperial&cnt=6&appid=7ec29f6bc7d7288b19154e672f2f3d75"
+          "https://api.openweathermap.org/data/2.5/onecall?lat=33.441792&lon=-94.037689&exclude=hourly,minutely&units=imperial&appid=7ec29f6bc7d7288b19154e672f2f3d75"
         );
         console.log(weatherData);
         setCityData(weatherData.data);
@@ -38,13 +38,43 @@ const SearchByCity = (props) => {
   }
   console.log(cityData);
 
+  function unixTimeConverter(unixTime) {
+    const options = {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+    let unixMilliseconds = unixTime * 1000;
+    let dataObject = new Date(unixMilliseconds);
+
+    let humanDateFormat = dataObject.toLocaleDateString("en-US", options);
+
+    return humanDateFormat;
+  }
+
   return (
     <div className="forecast-container">
-      {cityData.list.map((item) => {
+      {cityData.daily.map((item) => {
+        console.log(unixTimeConverter(item.dt));
         return (
           <div className="forecast-data" key={item.dt}>
-            <h3>{item.dt_txt}</h3>
-            <p>{item.main.temp_max}</p>
+            {unixTimeConverter(cityData.current.dt) ===
+            unixTimeConverter(item.dt) ? (
+              <h2>Today</h2>
+            ) : (
+              <h2>{unixTimeConverter(item.dt)}</h2>
+            )}
+
+            <p>Minimum Temperature: {item.temp.min}</p>
+            <p>
+              {unixTimeConverter(cityData.current.dt) ===
+              unixTimeConverter(item.dt)
+                ? `Current Temperature: ${cityData.current.temp}`
+                : null}
+            </p>
+
+            <p>Maximum Temperature: {item.temp.max}</p>
           </div>
         );
       })}
