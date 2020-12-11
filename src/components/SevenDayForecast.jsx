@@ -35,11 +35,11 @@ const SevenDayForecast = (props) => {
     <div>
       <h1> Your Seven Day Forecast </h1>
       <form onSubmit={submitHandler}>
-        <label>Search By City/Zip Code</label>
+        <label>Search Zip Code</label>
         <input
           type="text"
-          id="city"
-          placeholder="Enter City/Zip Code"
+          id="zipCode"
+          placeholder="Enter Zip Code"
           value={userLocation.value}
           onChange={locationChangeHandler}
         />
