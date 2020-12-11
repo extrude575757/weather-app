@@ -39,7 +39,7 @@ const Search = (props) => {
   }
 
   if (error) {
-    return <div>No weather for today! :(</div>;
+    return <div>The Zip Code entered is not pulling data :(</div>;
   }
   // console.log(cityData);
 
